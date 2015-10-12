@@ -32,7 +32,7 @@
 from times import Time
 
 const
-  hasSpawnH = not defined(haiku) # should exist for every Posix system nowadays
+  hasSpawnH = false #  not defined(haiku) # should exist for every Posix system nowadays
   hasAioH = defined(linux)
 
 when false:
@@ -407,12 +407,6 @@ when hasAioH:
       aio_sigevent*: TsigEvent  ## Signal number and value.
       aio_lio_opcode: cint      ## Operation to be performed.
 
-when hasSpawnH:
-  type
-    Tposix_spawnattr* {.importc: "posix_spawnattr_t",
-                        header: "<spawn.h>", final, pure.} = object
-    Tposix_spawn_file_actions* {.importc: "posix_spawn_file_actions_t",
-                                 header: "<spawn.h>", final, pure.} = object
 
 type
   Socklen* {.importc: "socklen_t", header: "<sys/socket.h>".} = cuint
@@ -1739,27 +1733,6 @@ var
     ## Invalid fd member (revents only).
 
 
-when hasSpawnH:
-  var
-    POSIX_SPAWN_RESETIDS* {.importc, header: "<spawn.h>".}: cint
-    POSIX_SPAWN_SETPGROUP* {.importc, header: "<spawn.h>".}: cint
-    POSIX_SPAWN_SETSCHEDPARAM* {.importc, header: "<spawn.h>".}: cint
-    POSIX_SPAWN_SETSCHEDULER* {.importc, header: "<spawn.h>".}: cint
-    POSIX_SPAWN_SETSIGDEF* {.importc, header: "<spawn.h>".}: cint
-    POSIX_SPAWN_SETSIGMASK* {.importc, header: "<spawn.h>".}: cint
-
-  when defined(linux):
-    # better be safe than sorry; Linux has this flag, macosx doesn't, don't
-    # know about the other OSes
-
-    # Non-GNU systems like TCC and musl-libc  don't define __USE_GNU, so we
-    # can't get the magic number from spawn.h
-    const POSIX_SPAWN_USEVFORK* = cint(0x40)
-  else:
-    # macosx lacks this, so we define the constant to be 0 to not affect
-    # OR'ing of flags:
-    const POSIX_SPAWN_USEVFORK* = cint(0)
-
 when hasAioH:
   proc aio_cancel*(a1: cint, a2: ptr Taiocb): cint {.importc, header: "<aio.h>".}
   proc aio_error*(a1: ptr Taiocb): cint {.importc, header: "<aio.h>".}
@@ -2363,58 +2336,6 @@ proc pselect*(a1: cint, a2, a3, a4: ptr TFdSet, a5: ptr Ttimespec,
          a6: var Tsigset): cint  {.importc, header: "<sys/select.h>".}
 proc select*(a1: cint | SocketHandle, a2, a3, a4: ptr TFdSet, a5: ptr Timeval): cint {.
              importc, header: "<sys/select.h>".}
-
-when hasSpawnH:
-  proc posix_spawn*(a1: var TPid, a2: cstring,
-            a3: var Tposix_spawn_file_actions,
-            a4: var Tposix_spawnattr,
-            a5, a6: cstringArray): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawn_file_actions_addclose*(a1: var Tposix_spawn_file_actions,
-            a2: cint): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawn_file_actions_adddup2*(a1: var Tposix_spawn_file_actions,
-            a2, a3: cint): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawn_file_actions_addopen*(a1: var Tposix_spawn_file_actions,
-            a2: cint, a3: cstring, a4: cint, a5: TMode): cint {.
-            importc, header: "<spawn.h>".}
-  proc posix_spawn_file_actions_destroy*(
-    a1: var Tposix_spawn_file_actions): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawn_file_actions_init*(
-    a1: var Tposix_spawn_file_actions): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_destroy*(a1: var Tposix_spawnattr): cint {.
-    importc, header: "<spawn.h>".}
-  proc posix_spawnattr_getsigdefault*(a1: var Tposix_spawnattr,
-            a2: var Tsigset): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_getflags*(a1: var Tposix_spawnattr,
-            a2: var cshort): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_getpgroup*(a1: var Tposix_spawnattr,
-            a2: var TPid): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_getschedparam*(a1: var Tposix_spawnattr,
-            a2: var Tsched_param): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_getschedpolicy*(a1: var Tposix_spawnattr,
-            a2: var cint): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_getsigmask*(a1: var Tposix_spawnattr,
-            a2: var Tsigset): cint {.importc, header: "<spawn.h>".}
-
-  proc posix_spawnattr_init*(a1: var Tposix_spawnattr): cint {.
-    importc, header: "<spawn.h>".}
-  proc posix_spawnattr_setsigdefault*(a1: var Tposix_spawnattr,
-            a2: var Tsigset): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_setflags*(a1: var Tposix_spawnattr, a2: cint): cint {.
-    importc, header: "<spawn.h>".}
-  proc posix_spawnattr_setpgroup*(a1: var Tposix_spawnattr, a2: TPid): cint {.
-    importc, header: "<spawn.h>".}
-
-  proc posix_spawnattr_setschedparam*(a1: var Tposix_spawnattr,
-            a2: var Tsched_param): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnattr_setschedpolicy*(a1: var Tposix_spawnattr,
-                                       a2: cint): cint {.
-                                       importc, header: "<spawn.h>".}
-  proc posix_spawnattr_setsigmask*(a1: var Tposix_spawnattr,
-            a2: var Tsigset): cint {.importc, header: "<spawn.h>".}
-  proc posix_spawnp*(a1: var TPid, a2: cstring,
-            a3: var Tposix_spawn_file_actions,
-            a4: var Tposix_spawnattr,
-            a5, a6: cstringArray): cint {.importc, header: "<spawn.h>".}
 
 proc getcontext*(a1: var Tucontext): cint {.importc, header: "<ucontext.h>".}
 proc makecontext*(a1: var Tucontext, a4: proc (){.noconv.}, a3: cint) {.

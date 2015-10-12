@@ -8,7 +8,7 @@ crtbegin.o crtend.o crt2.o dllcrt2.o libgcc_s_dw2-1.dll libgcc_s_sjlj-1.dll
 libgcc_s_seh-1.dll libexpat-1.dll libwinpthread-1.dll aio.h dlfcn.h fcntl.h
 fenv.h fmtmsg.h fnmatch.h ftw.h errno.h glob.h gtmath.h if.h in.h ipc.h
 langinfo.h locale.h math.h mman.h netdb.h nl_types.h poll.h pthread.h pwd.h
-sched.h select.h semaphore.h signal.h socket.h spawn.h stat.h statvfs.h stdio.h
+sched.h select.h semaphore.h signal.h socket.h stat.h statvfs.h stdio.h
 stdlib.h string.h strings.h tcp.h time.h types.h ucontext.h uio.h utsname.h
 unistd.h wait.h varargs.h windows.h zlib.h
 """.split
