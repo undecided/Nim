@@ -734,8 +734,7 @@ elif not defined(useNimRtl):
     discard write(data.pErrorPipe[writeIdx], addr error, sizeof(error))
     exitnow(1)
 
-  when defined(macosx) or defined(freebsd):
-    var environ {.importc.}: cstringArray
+  var environ {.importc.}: cstringArray
 
   proc startProcessAfterFork(data: ptr TStartProcessData) =
     # Warning: no GC here!
