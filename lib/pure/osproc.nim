@@ -816,17 +816,10 @@ elif not defined(useNimRtl):
     discard fcntl(data.pErrorPipe[writeIdx], F_SETFD, FD_CLOEXEC)
 
     if data.optionPoUsePath:
-      when defined(macosx) or defined(freebsd):
-        # MacOSX doesn't have execvpe, so we need workaround.
-        # On MacOSX we can arrive here only from fork, so this is safe:
-        environ = data.sysEnv
-        discard execvp(data.sysCommand, data.sysArgs)
-      else:
-        when defined(uClibc):
-          # uClibc environment (OpenWrt included) doesn't have the full execvpe
-          discard execve(data.sysCommand, data.sysArgs, data.sysEnv)
-        else:
-          discard execvpe(data.sysCommand, data.sysArgs, data.sysEnv)
+      # MacOSX, freebsd and android don't have execvpe, so we need workaround.
+      # On MacOSX we can arrive here only from fork, so this is safe:
+      environ = data.sysEnv
+      discard execvp(data.sysCommand, data.sysArgs)
     else:
       discard execve(data.sysCommand, data.sysArgs, data.sysEnv)
 
