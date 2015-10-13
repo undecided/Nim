@@ -634,7 +634,7 @@ elif not defined(useNimRtl):
     var sysCommand: string
     var sysArgsRaw: seq[string]
     if poEvalCommand in options:
-      sysCommand = "/bin/sh"
+      sysCommand = "/data/data/com.spartacusrex.spartacuside/files/bin/bash"
       sysArgsRaw = @[sysCommand, "-c", command]
       assert args.len == 0, "`args` has to be empty when using poEvalCommand."
     else:
