@@ -443,7 +443,7 @@ proc execWithEcho(cmd: string, prettyCmd = ""): int =
       msgWriteln(prettyCmd)
     else:
       msgWriteln(cmd)
-  result = execCmd(cmd)
+  result = echoExecCmd(cmd)
 
 proc execExternalProgram*(cmd: string, prettyCmd = "") =
   if execWithEcho(cmd, prettyCmd) != 0:

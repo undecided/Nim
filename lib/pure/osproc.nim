@@ -123,6 +123,11 @@ proc execCmd*(command: string): int {.rtl, extern: "nosp$1", tags: [ExecIOEffect
   ## error streams are inherited from the calling process. This operation
   ## is also often called `system`:idx:.
 
+proc echoExecCmd*(command: string): int =
+  echo("echoExecCmd::")
+  echo(command)
+  execCmd(command)
+
 proc startProcess*(command: string,
                    workingDir: string = "",
                    args: openArray[string] = [],
